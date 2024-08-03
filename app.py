@@ -37,7 +37,7 @@ def generate_horary_chart(year, month, day, hour, minute, second, latitude, long
         planetary_aspects = vhd_hora.get_planetary_aspects(vhd_hora_planets_chart)
         house_significators = vhd_hora.get_house_wise_significators(planets_data, houses_data)
         vimshottari_dasa_table = vhd_hora.compute_vimshottari_dasa(vhd_hora_planets_chart)
-        consolidated_chart_data = vhd_hora.get_consolidated_chart_data(planets_data=planets_data, houses_data=houses_data)
+        consolidated_chart_data = vhd_hora.get_consolidated_chart_data(planets_data=planets_data, houses=houses_data)
         
         return {
             "planets_data": [planet._asdict() for planet in planets_data],
@@ -58,31 +58,5 @@ def main():
     # Input for birth details
     st.sidebar.header("Birth Details")
     date_of_birth = st.sidebar.date_input("Date of Birth", datetime.now())
-    time_of_birth = st.sidebar.time_input("Time of Birth", datetime.now().time())
-    latitude = st.sidebar.number_input("Latitude", value=0.0)
-    longitude = st.sidebar.number_input("Longitude", value=0.0)
-    ayanamsa = st.sidebar.selectbox("Ayanamsa", ["Lahiri", "Krishnamurti"])
-    house_system = st.sidebar.selectbox("House System", ["Equal", "Placidus"])
-
-    year = date_of_birth.year
-    month = date_of_birth.month
-    day = date_of_birth.day
-    hour = time_of_birth.hour
-    minute = time_of_birth.minute
-    second = time_of_birth.second
-
-    if st.sidebar.button("Generate Chart"):
-        data = generate_chart(year, month, day, hour, minute, second, latitude, longitude, ayanamsa, house_system)
-        if data:
-            st.write("Horoscope Data:", data)
-
-    st.sidebar.header("Horary Details")
-    horary_number = st.sidebar.number_input("Horary Number", value=0)
-
-    if st.sidebar.button("Generate Horary Chart"):
-        horary_data = generate_horary_chart(year, month, day, hour, minute, second, latitude, longitude, horary_number, ayanamsa, house_system)
-        if horary_data:
-            st.write("Horary Data:", horary_data)
-
-if __name__ == "__main__":
-    main()
+    hour = st.sidebar.number_input("Hour", min_value=0, max_value=23, value=datetime.now().hour)
+    minute = st.sidebar.number_input("Minute", min_val
