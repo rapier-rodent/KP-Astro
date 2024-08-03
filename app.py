@@ -4,6 +4,7 @@ from vedicastro import VedicAstro, horary_chart
 
 def generate_chart(year, month, day, hour, minute, second, latitude, longitude, ayanamsa, house_system):
     try:
+        # Create a VedicAstro instance with the provided data
         horoscope = VedicAstro.VedicHoroscopeData(
             year, month, day, hour, minute, second, latitude, longitude, ayanamsa, house_system
         )
