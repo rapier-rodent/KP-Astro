@@ -4,7 +4,9 @@ from vedicastro import VedicAstro, horary_chart
 
 def generate_chart(year, month, day, hour, minute, second, latitude, longitude, ayanamsa, house_system):
     try:
-        horoscope = VedicAstro.VedicHoroscopeData(year, month, day, hour, minute, second, latitude, longitude, ayanamsa, house_system)
+        horoscope = VedicAstro.VedicHoroscopeData(
+            year, month, day, hour, minute, second, latitude, longitude, ayanamsa, house_system
+        )
         chart = horoscope.generate_chart()
         planets_data = horoscope.get_planets_data_from_chart(chart)
         houses_data = horoscope.get_houses_data_from_chart(chart)
@@ -12,7 +14,9 @@ def generate_chart(year, month, day, hour, minute, second, latitude, longitude, 
         planetary_aspects = horoscope.get_planetary_aspects(chart)
         house_significators = horoscope.get_house_wise_significators(planets_data, houses_data)
         vimshottari_dasa_table = horoscope.compute_vimshottari_dasa(chart)
-        consolidated_chart_data = horoscope.get_consolidated_chart_data(planets_data=planets_data, houses_data=houses_data)
+        consolidated_chart_data = horoscope.get_consolidated_chart_data(
+            planets_data=planets_data, houses_data=houses_data
+        )
         
         return {
             "planets_data": [planet._asdict() for planet in planets_data],
@@ -29,15 +33,21 @@ def generate_chart(year, month, day, hour, minute, second, latitude, longitude, 
 
 def generate_horary_chart(year, month, day, hour, minute, second, latitude, longitude, horary_number, ayanamsa, house_system):
     try:
-        matched_time, vhd_hora_houses_chart, houses_data = horary_chart.find_exact_ascendant_time(year, month, day, latitude, longitude, horary_number, ayanamsa)
-        vhd_hora = VedicAstro.VedicHoroscopeData(year, month, day, hour, minute, second, latitude, longitude, ayanamsa, house_system)
+        matched_time, vhd_hora_houses_chart, houses_data = horary_chart.find_exact_ascendant_time(
+            year, month, day, latitude, longitude, horary_number, ayanamsa
+        )
+        vhd_hora = VedicAstro.VedicHoroscopeData(
+            year, month, day, hour, minute, second, latitude, longitude, ayanamsa, house_system
+        )
         vhd_hora_planets_chart = vhd_hora.generate_chart()
         planets_data = vhd_hora.get_planets_data_from_chart(vhd_hora_planets_chart, vhd_hora_houses_chart)
         planet_significators = vhd_hora.get_planet_wise_significators(planets_data, houses_data)
         planetary_aspects = vhd_hora.get_planetary_aspects(vhd_hora_planets_chart)
         house_significators = vhd_hora.get_house_wise_significators(planets_data, houses_data)
         vimshottari_dasa_table = vhd_hora.compute_vimshottari_dasa(vhd_hora_planets_chart)
-        consolidated_chart_data = vhd_hora.get_consolidated_chart_data(planets_data=planets_data, houses=houses_data)
+        consolidated_chart_data = vhd_hora.get_consolidated_chart_data(
+            planets_data=planets_data, houses=houses_data
+        )
         
         return {
             "planets_data": [planet._asdict() for planet in planets_data],
@@ -63,8 +73,8 @@ def main():
     second = st.sidebar.number_input("Second", min_value=0, max_value=59, value=datetime.now().second)
     latitude = st.sidebar.number_input("Latitude", value=0.0)
     longitude = st.sidebar.number_input("Longitude", value=0.0)
-    ayanamsa = st.sidebar.selectbox("Ayanamsa", ["Lahiri", "Krishnamurti"])
-    house_system = st.sidebar.selectbox("House System", ["Equal", "Placidus"])
+    ayanamsa = st.sidebar.selectbox("Ayanamsa", ["Lahiri", "Krishnamurti", "Other"])
+    house_system = st.sidebar.selectbox("House System", ["Equal", "Placidus", "Other"])
 
     year = date_of_birth.year
     month = date_of_birth.month
