@@ -1,4 +1,9 @@
 import streamlit as st
+import os
+import swisseph as swe
+
+# Set the path to the ephemeris data directory
+swe.set_ephe_path(os.path.join(os.path.dirname(__file__), 'ephe')) 
 from vedicastro import VedicAstro, horary_chart
 from datetime import datetime, time
 
