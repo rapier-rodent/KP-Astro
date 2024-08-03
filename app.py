@@ -1,5 +1,5 @@
 import streamlit as st
-from vedicastrology import Chart
+from vedicastro import Chart  # Assuming `Chart` is a class from `vedicastro`
 
 def main():
     st.title("Vedic Astrology App")
@@ -10,12 +10,14 @@ def main():
     place_of_birth = st.text_input("Place of Birth")
 
     if st.button("Generate Chart"):
-        # Generate chart using vedicastrology library
+        # Generate chart using vedicastro library
         # Example usage, adjust according to the actual API
-        chart = Chart(date_of_birth, time_of_birth, place_of_birth)
-
-        st.write("Your Vedic Astrology Chart")
-        st.write(chart)
+        try:
+            chart = Chart(date_of_birth, time_of_birth, place_of_birth)
+            st.write("Your Vedic Astrology Chart:")
+            st.write(chart)
+        except Exception as e:
+            st.error(f"Error generating chart: {e}")
 
 if __name__ == "__main__":
     main()
