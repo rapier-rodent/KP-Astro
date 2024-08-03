@@ -1,5 +1,6 @@
 import streamlit as st
 from vedicastro import VedicAstro, horary_chart
+from datetime import datetime, time
 
 # Set page title
 st.set_page_config(page_title="Vedic Astrology App")
@@ -7,11 +8,17 @@ st.set_page_config(page_title="Vedic Astrology App")
 # Input widgets
 st.title("Vedic Astrology Chart Calculator")
 
-# Date input
+# Chart type selection
+chart_type = st.radio("Select Chart Type:", ["Natal Chart", "Horary Chart"])
+
+# Date input (allowing any date)
 birth_date = st.date_input("Enter your birth date:")
 
-# Time input
-birth_time = st.time_input("Enter your birth time:")
+# Time input (allowing any time with seconds)
+birth_hour = st.number_input("Hour:", min_value=0, max_value=23, step=1, value=datetime.now().hour)
+birth_minute = st.number_input("Minute:", min_value=0, max_value=59, step=1, value=datetime.now().minute)
+birth_second = st.number_input("Second:", min_value=0, max_value=59, step=1, value=datetime.now().second)
+birth_time = time(birth_hour, birth_minute, birth_second)
 
 # Location input
 st.subheader("Location Details")
@@ -22,12 +29,15 @@ utc_offset = st.text_input("UTC Offset:", value="+5:30")
 # Ayanamsa selection
 ayanamsa = st.selectbox("Select Ayanamsa:", ["Lahiri", "Krishnamurti", "Krishnamurti_Senthilathiban"])
 
-# Optional horary number input
-horary_number = st.number_input("Horary Number (optional):", min_value=1, max_value=249, step=1)
+# Horary number input (only if Horary Chart is selected)
+if chart_type == "Horary Chart":
+    horary_number = st.number_input("Horary Number:", min_value=1, max_value=249, step=1)
+else:
+    horary_number = None
 
 # Calculate chart data
 if st.button("Calculate Chart"):
-    if horary_number:
+    if chart_type == "Horary Chart":
         # Calculate horary chart
         matched_time, _, houses_data = horary_chart.find_exact_ascendant_time(
             birth_date.year, birth_date.month, birth_date.day, utc_offset,
@@ -52,6 +62,7 @@ if st.button("Calculate Chart"):
 
     # Display results
     st.subheader("Chart Data")
+    st.write(f"Chart Type: {chart_type}")
     st.write(f"Ayanamsa: {ayanamsa}")
     st.write(f"Ayanamsa Value: {vhd.get_ayanamsa()}")  # Display Ayanamsa value
 
