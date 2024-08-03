@@ -59,4 +59,29 @@ def main():
     st.sidebar.header("Birth Details")
     date_of_birth = st.sidebar.date_input("Date of Birth", datetime.now())
     hour = st.sidebar.number_input("Hour", min_value=0, max_value=23, value=datetime.now().hour)
-    minute = st.sidebar.number_input("Minute", min_val
+    minute = st.sidebar.number_input("Minute", min_value=0, max_value=59, value=datetime.now().minute)
+    second = st.sidebar.number_input("Second", min_value=0, max_value=59, value=datetime.now().second)
+    latitude = st.sidebar.number_input("Latitude", value=0.0)
+    longitude = st.sidebar.number_input("Longitude", value=0.0)
+    ayanamsa = st.sidebar.selectbox("Ayanamsa", ["Lahiri", "Krishnamurti"])
+    house_system = st.sidebar.selectbox("House System", ["Equal", "Placidus"])
+
+    year = date_of_birth.year
+    month = date_of_birth.month
+    day = date_of_birth.day
+
+    if st.sidebar.button("Generate Chart"):
+        data = generate_chart(year, month, day, hour, minute, second, latitude, longitude, ayanamsa, house_system)
+        if data:
+            st.write("Horoscope Data:", data)
+
+    st.sidebar.header("Horary Details")
+    horary_number = st.sidebar.number_input("Horary Number", value=0)
+
+    if st.sidebar.button("Generate Horary Chart"):
+        horary_data = generate_horary_chart(year, month, day, hour, minute, second, latitude, longitude, horary_number, ayanamsa, house_system)
+        if horary_data:
+            st.write("Horary Data:", horary_data)
+
+if __name__ == "__main__":
+    main()
