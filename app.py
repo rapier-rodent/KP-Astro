@@ -1,4 +1,5 @@
 import streamlit as st
+from datetime import datetime
 from vedicastro import VedicAstro, horary_chart
 
 def generate_chart(year, month, day, hour, minute, second, utc, latitude, longitude, ayanamsa, house_system):
@@ -48,8 +49,8 @@ def main():
 
     # Input for birth details
     st.sidebar.header("Birth Details")
-    date_of_birth = st.sidebar.date_input("Date of Birth")
-    time_of_birth = st.sidebar.time_input("Time of Birth")
+    date_of_birth = st.sidebar.date_input("Date of Birth", datetime.now())
+    time_of_birth = st.sidebar.time_input("Time of Birth", datetime.now().time())
     latitude = st.sidebar.number_input("Latitude", value=0.0)
     longitude = st.sidebar.number_input("Longitude", value=0.0)
     ayanamsa = st.sidebar.selectbox("Ayanamsa", ["Lahiri", "Krishnamurti"])
