@@ -45,4 +45,7 @@ if st.button("Generate Horoscope"):
         st.write("Ayanamsa Value:", chart_data.get("ayanamsa"))
         st.write("Krishnamurti Ayanamsa Value:", chart_data.get("krishnamurti_ayanamsa"))
     else:
-        st.error("Error generating chart data.")
+        error_data = response.json()
+        st.error(f"Error generating chart data. Status code: {response.status_code}")
+        st.write("Error message:", error_data.get("error"))
+        st.write("Details:", error_data.get("details"))
