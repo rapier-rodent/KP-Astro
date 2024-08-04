@@ -43,25 +43,6 @@ if st.button("Generate Horoscope"):
         # Display additional information
         st.write("Birth Time (IST):", chart_data.get("birth_time_ist"))
         st.write("Ayanamsa Value:", chart_data.get("ayanamsa"))
-
-        # Prepare data for download
-        output_data = f"Birth Time (IST): {chart_data.get('birth_time_ist')}\n"
-        output_data += f"Ayanamsa Value: {chart_data.get('ayanamsa')}\n"
-        output_data += f"Planets Data: {chart_data.get('planets_data')}\n"
-        output_data += f"Houses Data: {chart_data.get('houses_data')}\n"
-
-        # Copy to clipboard button
-        clipboard_data = st.button("Copy to Clipboard")
-        if clipboard_data:
-            st.session_state.clipboard_data = output_data
-            st.success("Output copied to clipboard!")
-
-        # Download button
-        st.download_button(
-            label="Download Output",
-            data=output_data,
-            file_name='horoscope_data.txt',
-            mime='text/plain'
-        )
+        st.write("Krishnamurti Ayanamsa Value:", chart_data.get("krishnamurti_ayanamsa"))
     else:
         st.error("Error generating chart data.")
