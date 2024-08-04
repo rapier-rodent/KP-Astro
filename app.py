@@ -1,10 +1,8 @@
 import streamlit as st
 from vedicastro import VedicAstro
-from flatlib import const, chart
-from flatlib.datetime import Datetime
 
 # Constants
-UTC_OFFSET = "+00:00"  # Set to UTC since flatlib uses UTC
+UTC_OFFSET = "-05:30:00"  # UTC offset for IST (-05:30)
 
 def calculate_horoscope(year, month, day, hour, minute, second, latitude, longitude, ayanamsa="Lahiri", house_system="Equal"):
     # VedicAstro calculation
@@ -25,19 +23,10 @@ def calculate_horoscope(year, month, day, hour, minute, second, latitude, longit
     vedic_planets_data = horoscope.get_planets_data()
     vedic_houses_data = horoscope.get_houses_data()
 
-    # flatlib calculation
-    date_str = f"{year}/{month}/{day} {hour}:{minute}:{second}"
-    date_obj = Datetime(date_str, UTC_OFFSET)  # Use UTC offset as needed
-    flatlib_chart = chart.Chart(date_obj, latitude, longitude, hsys=const.HOUSES_PLACIDUS if house_system == "Placidus" else const.HOUSES_EQUAL)
-    flatlib_planets = {p.id: p for p in flatlib_chart.planets}
-    flatlib_houses = {h.id: h for h in flatlib_chart.houses}
-
     return {
         "vedic_chart": vedic_chart,
         "vedic_planets_data": vedic_planets_data,
-        "vedic_houses_data": vedic_houses_data,
-        "flatlib_planets": flatlib_planets,
-        "flatlib_houses": flatlib_houses
+        "vedic_houses_data": vedic_houses_data
     }
 
 def main():
