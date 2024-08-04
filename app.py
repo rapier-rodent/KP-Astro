@@ -45,7 +45,10 @@ if st.button("Generate Horoscope"):
         # Button to copy chart data to clipboard
         if st.button("Copy Chart Data"):
             st.write("Chart data copied to clipboard!")
-            st.clipboard(str(chart_data))  # This will copy the chart data to the clipboard
+            # Copy the chart data to clipboard (this is a placeholder)
+            # Streamlit does not currently support copying to clipboard directly.
+            # You might need to use a workaround or inform the user to manually copy.
+            st.text_area("Copy this data:", str(chart_data), height=150)
         
         # Button to download chart data as CSV
         if st.button("Download Chart Data"):
