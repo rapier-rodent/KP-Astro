@@ -1,90 +1,47 @@
 import streamlit as st
-import os
-import swisseph as swe
+import requests
 
-# Set the path to the ephemeris data directory
-swe.set_ephe_path(os.path.join(os.path.dirname(__file__), 'ephe')) 
-from vedicastro import VedicAstro, horary_chart
-from datetime import datetime, time
+# Constants
+API_URL = "https://your-fastapi-service-url.com"  # Replace with your actual FastAPI service URL
+UTC_OFFSET = "-05:30:00"
 
-# Set page title
-st.set_page_config(page_title="Vedic Astrology App")
+def get_horoscope_data(year, month, day, hour, minute, second, latitude, longitude, ayanamsa="Lahiri", house_system="Equal"):
+    payload = {
+        "year": year,
+        "month": month,
+        "day": day,
+        "hour": hour,
+        "minute": minute,
+        "second": second,
+        "utc": UTC_OFFSET,
+        "latitude": latitude,
+        "longitude": longitude,
+        "ayanamsa": ayanamsa,
+        "house_system": house_system
+    }
+    response = requests.post(f"{API_URL}/get_all_horoscope_data", json=payload)
+    return response.json()
 
-# Input widgets
-st.title("Vedic Astrology Chart Calculator")
+def main():
+    st.title("Vedic Astrology Horoscope Chart")
 
-# Chart type selection
-chart_type = st.radio("Select Chart Type:", ["Natal Chart", "Horary Chart"])
+    with st.form("horoscope_form"):
+        year = st.number_input("Year", min_value=1900, max_value=2100, value=2023)
+        month = st.number_input("Month", min_value=1, max_value=12, value=1)
+        day = st.number_input("Day", min_value=1, max_value=31, value=1)
+        hour = st.number_input("Hour", min_value=0, max_value=23, value=0)
+        minute = st.number_input("Minute", min_value=0, max_value=59, value=0)
+        second = st.number_input("Second", min_value=0, max_value=59, value=0)
+        latitude = st.number_input("Latitude", min_value=-90.0, max_value=90.0, value=0.0)
+        longitude = st.number_input("Longitude", min_value=-180.0, max_value=180.0, value=0.0)
+        ayanamsa = st.selectbox("Ayanamsa", ["Lahiri", "Krishnamurti"])
+        house_system = st.selectbox("House System", ["Equal", "Placidus"])
 
-# Date input (allowing any date)
-birth_date = st.date_input("Enter your birth date:")
+        submit_button = st.form_submit_button(label="Get Horoscope Data")
 
-# Time input (allowing any time with seconds)
-birth_hour = st.number_input("Hour:", min_value=0, max_value=23, step=1, value=datetime.now().hour)
-birth_minute = st.number_input("Minute:", min_value=0, max_value=59, step=1, value=datetime.now().minute)
-birth_second = st.number_input("Second:", min_value=0, max_value=59, step=1, value=datetime.now().second)
-birth_time = time(birth_hour, birth_minute, birth_second)
+    if submit_button:
+        data = get_horoscope_data(year, month, day, hour, minute, second, latitude, longitude, ayanamsa, house_system)
+        st.json(data)
 
-# Location input
-st.subheader("Location Details")
-latitude = st.number_input("Latitude:", value=28.6334)
-longitude = st.number_input("Longitude:", value=77.2834)
-utc_offset = st.text_input("UTC Offset:", value="+5:30")
-
-# Ayanamsa selection
-ayanamsa = st.selectbox("Select Ayanamsa:", ["Lahiri", "Krishnamurti", "Krishnamurti_Senthilathiban"])
-
-# Horary number input (only if Horary Chart is selected)
-if chart_type == "Horary Chart":
-    horary_number = st.number_input("Horary Number:", min_value=1, max_value=249, step=1)
-else:
-    horary_number = None
-
-# Calculate chart data
-if st.button("Calculate Chart"):
-    if chart_type == "Horary Chart":
-        # Calculate horary chart
-        matched_time, _, houses_data = horary_chart.find_exact_ascendant_time(
-            birth_date.year, birth_date.month, birth_date.day, utc_offset,
-            latitude, longitude, horary_number, ayanamsa
-        )
-        birth_time = matched_time.time()  # Update birth time with matched time
-        vhd = VedicAstro.VedicHoroscopeData(
-            birth_date.year, birth_date.month, birth_date.day, birth_time.hour, birth_time.minute, birth_time.second,
-            utc_offset, latitude, longitude, ayanamsa, "Placidus"
-        )
-        chart = vhd.generate_chart()
-        planets_data = vhd.get_planets_data_from_chart(chart)
-    else:
-        # Calculate birth chart
-        vhd = VedicAstro.VedicHoroscopeData(
-            birth_date.year, birth_date.month, birth_date.day, birth_time.hour, birth_time.minute, birth_time.second,
-            utc_offset, latitude, longitude, ayanamsa, "Placidus"
-        )
-        chart = vhd.generate_chart()
-        planets_data = vhd.get_planets_data_from_chart(chart)
-        houses_data = vhd.get_houses_data_from_chart(chart)
-
-    # Display results
-    st.subheader("Chart Data")
-    st.write(f"Chart Type: {chart_type}")
-    st.write(f"Ayanamsa: {ayanamsa}")
-    st.write(f"Ayanamsa Value: {vhd.get_ayanamsa()}")  # Display Ayanamsa value
-
-    st.subheader("Planetary Positions:")
-    st.dataframe(planets_data)
-
-    st.subheader("House Cusps:")
-    st.dataframe(houses_data)
-
-    st.subheader("Vimshottari Dasa:")
-    st.write(vhd.compute_vimshottari_dasa(chart))
-
-    st.subheader("Planet Significators:")
-    st.dataframe(vhd.get_planet_wise_significators(planets_data, houses_data))
-
-    st.subheader("House Significators:")
-    st.dataframe(vhd.get_house_wise_significators(planets_data, houses_data))
-
-    st.subheader("Planetary Aspects:")
-    st.dataframe(vhd.get_planetary_aspects(chart))
+if __name__ == "__main__":
+    main()
