@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
-import pandas as pd
+import csv
+from io import StringIO
 
 st.title("Vedic Astrology Chart Generator")
 
@@ -43,24 +44,39 @@ if st.button("Generate Horoscope"):
         # Display additional information
         st.write("Birth Time (IST):", chart_data.get("birth_time_ist"))
         st.write("Ayanamsa Value:", chart_data.get("ayanamsa_value"))
-
-        # Create a DataFrame for download
-        df = pd.DataFrame(chart_data)
         
-        # Copy button
+        # Add copy and download options
+        st.markdown("### Options")
         if st.button("Copy Chart Data"):
-            st.write("Chart data copied to clipboard!")  # You can implement a more complex clipboard functionality if needed
-
-        # Download button
-        csv = df.to_csv(index=False)
-        st.download_button(
-            label="Download Chart Data as CSV",
-            data=csv,
-            file_name='chart_data.csv',
-            mime='text/csv'
-        )
+            st.write("Chart data copied to clipboard!")
+            st.write(chart_data)
+            st.clipboard(str(chart_data))
+        
+        if st.button("Download Chart Data"):
+            st.write("Downloading chart data as CSV...")
+            csv_data = convert_to_csv(chart_data)
+            st.download_button(
+                label="Download data as CSV",
+                data=csv_data,
+                file_name="chart_data.csv",
+                mime="text/csv",
+            )
     else:
         error_data = response.json()
         st.error(f"Error generating chart data. Status code: {response.status_code}")
         st.write("Error message:", error_data.get("error"))
         st.write("Details:", error_data.get("details"))
+
+def convert_to_csv(data):
+    csv_buffer = StringIO()
+    writer = csv.writer(csv_buffer)
+    
+    # Assuming the chart_data is a dictionary with lists as values
+    for key, value in data.items():
+        if isinstance(value, list):
+            for row in value:
+                writer.writerow([key] + row)
+        else:
+            writer.writerow([key, value])
+    
+    return csv_buffer.getvalue()
