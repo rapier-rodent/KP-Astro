@@ -65,7 +65,11 @@ async def get_chart_data(input: ChartInput):
     vimshottari_dasa_table = horoscope.compute_vimshottari_dasa(chart)
     consolidated_chart_data = horoscope.get_consolidated_chart_data(planets_data=planets_data, houses_data=houses_data, return_style=input.return_style)
 
+    # Include birth time in IST and ayanamsa value in the response
+    birth_time_ist = f"{input.hour + 5}:{input.minute} IST"  # Adjust for IST (UTC+5:30)
     return {
+        "birth_time_ist": birth_time_ist,
+        "ayanamsa": input.ayanamsa,
         "planets_data": [planet._asdict() for planet in planets_data],
         "houses_data": [house._asdict() for house in houses_data],
         "planet_significators": planet_significators,
