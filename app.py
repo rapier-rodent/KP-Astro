@@ -40,6 +40,7 @@ if st.button("Generate Horoscope"):
         st.json(chart_data)  # Display the chart data in a readable format
         
         # Display additional information
+        st.write("Birth Time (IST):", chart_data.get("birth_time_ist"))
         st.write("Ayanamsa Value:", chart_data.get("ayanamsa_value"))
     else:
         error_data = response.json()
