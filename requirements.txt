@@ -1,4 +1,11 @@
 streamlit
 git+https://github.com/diliprk/VedicAstro.git
 git+https://github.com/diliprk/flatlib.git@sidereal#egg=flatlib
+fastapi
+uvicorn
+tqdm
+polars
+prettytable
+ipykernel
+pyswisseph
 
