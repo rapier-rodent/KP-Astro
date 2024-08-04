@@ -38,22 +38,17 @@ if st.button("Generate Horoscope"):
 
     if response.status_code == 200:
         chart_data = response.json()
-        st.write("Generated Chart Data:")
-        st.json(chart_data)  # Display the chart data in a readable format
         
-        # Display additional information
-        st.write("Birth Time (IST):", chart_data.get("birth_time_ist"))
-        st.write("Ayanamsa Value:", chart_data.get("ayanamsa_value"))
-        
-        # Add copy and download options
+        # Add copy and download options at the top of the output
         st.markdown("### Options")
+        
+        # Button to copy chart data to clipboard
         if st.button("Copy Chart Data"):
             st.write("Chart data copied to clipboard!")
-            st.write(chart_data)
-            st.clipboard(str(chart_data))
+            st.clipboard(str(chart_data))  # This will copy the chart data to the clipboard
         
+        # Button to download chart data as CSV
         if st.button("Download Chart Data"):
-            st.write("Downloading chart data as CSV...")
             csv_data = convert_to_csv(chart_data)
             st.download_button(
                 label="Download data as CSV",
@@ -61,6 +56,14 @@ if st.button("Generate Horoscope"):
                 file_name="chart_data.csv",
                 mime="text/csv",
             )
+        
+        # Display generated chart data
+        st.write("Generated Chart Data:")
+        st.json(chart_data)  # Display the chart data in a readable format
+        
+        # Display additional information
+        st.write("Birth Time (IST):", chart_data.get("birth_time_ist"))
+        st.write("Ayanamsa Value:", chart_data.get("ayanamsa_value"))
     else:
         error_data = response.json()
         st.error(f"Error generating chart data. Status code: {response.status_code}")
@@ -71,12 +74,10 @@ def convert_to_csv(data):
     csv_buffer = StringIO()
     writer = csv.writer(csv_buffer)
     
-    # Assuming the chart_data is a dictionary with lists as values
-    for key, value in data.items():
-        if isinstance(value, list):
-            for row in value:
-                writer.writerow([key] + row)
-        else:
-            writer.writerow([key, value])
+    # Write the header
+    writer.writerow(data.keys())
+    
+    # Write the data
+    writer.writerow(data.values())
     
     return csv_buffer.getvalue()
