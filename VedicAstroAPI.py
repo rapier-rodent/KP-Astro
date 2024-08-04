@@ -87,7 +87,10 @@ async def get_chart_data(input: ChartInput):
         }
     except Exception as e:
         logger.error(f"Error generating chart data: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+        return {
+            "error": "Internal Server Error",
+            "details": str(e)  # Include the exception message for troubleshooting
+        }
 
 @app.post("/get_all_horary_data")
 async def get_horary_data(input: HoraryChartInput):
@@ -120,4 +123,7 @@ async def get_horary_data(input: HoraryChartInput):
         }
     except Exception as e:
         logger.error(f"Error generating horary data: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+        return {
+            "error": "Internal Server Error",
+            "details": str(e)  # Include the exception message for troubleshooting
+        }
