@@ -48,14 +48,14 @@ if st.button("Generate Horoscope"):
             st.text_area("Chart Data (Copy this):", str(chart_data), height=300)
         
         # Button to download chart data as CSV
-        if st.button("Download Chart Data"):
-            csv_data = convert_to_csv(chart_data)
-            st.download_button(
-                label="Download data as CSV",
-                data=csv_data,
-                file_name="chart_data.csv",
-                mime="text/csv",
-            )
+        csv_data = convert_to_csv(chart_data)
+        st.download_button(
+            label="Download Chart Data as CSV",
+            data=csv_data,
+            file_name="chart_data.csv",
+            mime="text/csv",
+            key="download-csv"  # Unique key to prevent caching issues
+        )
         
         # Display generated chart data
         st.write("Generated Chart Data:")
