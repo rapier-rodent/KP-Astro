@@ -9,4 +9,4 @@ prettytable
 ipykernel
 pyswisseph
 requests
-
+pydantic
