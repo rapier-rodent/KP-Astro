@@ -71,6 +71,7 @@ if st.button("Generate Horoscope"):
         st.write("Details:", error_data.get("details"))
 
 def convert_to_csv(data):
+    """Converts the chart data dictionary to CSV format."""
     csv_buffer = StringIO()
     writer = csv.writer(csv_buffer)
     
