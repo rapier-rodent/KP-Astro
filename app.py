@@ -39,3 +39,9 @@ if st.button("Generate Horoscope"):
         chart_data = response.json()
         st.write("Generated Chart Data:")
         st.json(chart_data)  # Display the chart data in a readable format
+        
+        # Display additional information
+        st.write("Birth Time (IST):", chart_data.get("birth_time_ist"))
+        st.write("Ayanamsa Value:", chart_data.get("ayanamsa"))
+    else:
+        st.error("Error generating chart data.")
