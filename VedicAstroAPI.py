@@ -67,11 +67,9 @@ async def get_chart_data(input: ChartInput):
 
     # Include birth time in IST and ayanamsa value in the response
     birth_time_ist = f"{input.hour + 5}:{input.minute} IST"  # Adjust for IST (UTC+5:30)
-    ayanamsa_value = horoscope.get_ayanamsa_value(input.year, input.month, input.day)
     return {
         "birth_time_ist": birth_time_ist,
-        "ayanamsa_name": input.ayanamsa,
-        "ayanamsa_value": ayanamsa_value,
+        "ayanamsa": input.ayanamsa,
         "planets_data": [planet._asdict() for planet in planets_data],
         "houses_data": [house._asdict() for house in houses_data],
         "planet_significators": planet_significators,
