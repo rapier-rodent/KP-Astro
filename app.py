@@ -3,6 +3,7 @@ import requests
 
 st.title("Vedic Astrology Chart Generator")
 
+# User inputs for horoscope generation
 year = st.number_input("Year", min_value=1900, max_value=2100)
 month = st.number_input("Month", min_value=1, max_value=12)
 day = st.number_input("Day", min_value=1, max_value=31)
@@ -16,7 +17,8 @@ ayanamsa = st.selectbox("Ayanamsa", ["Lahiri", "Krishnamurti"])
 house_system = st.selectbox("House System", ["Equal", "Placidus"])
 
 if st.button("Generate Horoscope"):
-    response = requests.post("https://your-render-url/get_all_horoscope_data", json={
+    # Prepare the payload for the API request
+    payload = {
         "year": year,
         "month": month,
         "day": day,
@@ -28,9 +30,12 @@ if st.button("Generate Horoscope"):
         "longitude": longitude,
         "ayanamsa": ayanamsa,
         "house_system": house_system
-    })
+    }
+
+    # Make a POST request to the FastAPI backend
+    response = requests.post("https://kp-astro.onrender.com/get_all_horoscope_data", json=payload)
+
     if response.status_code == 200:
         chart_data = response.json()
-        st.write("Generated Chart Data:", chart_data)
-    else:
-        st.error("Error generating chart data.")
+        st.write("Generated Chart Data:")
+        st.json(chart_data)  # Display the chart data in a readable format
