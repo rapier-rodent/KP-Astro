@@ -38,14 +38,6 @@ if st.button("Generate Horoscope"):
     if response.status_code == 200:
         chart_data = response.json()
         
-        # Add copy and download options at the top of the output
-        st.markdown("### Options")
-        
-        # Button to copy chart data to clipboard
-        if st.button("Copy Chart Data"):
-            # Show a text area with the chart data for manual copying
-            st.text_area("Chart Data (Copy this):", json.dumps(chart_data, indent=4), height=300)
-        
         # Button to download chart data as JSON
         json_data = json.dumps(chart_data, indent=4)
         st.download_button(
