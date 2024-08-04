@@ -1,26 +1,13 @@
 import streamlit as st
-import requests
+from vedicastro import KPChart, SwissEph, KPSettings
 
 # Constants
-API_URL = "https://your-fastapi-service-url.com"  # Replace with your actual FastAPI service URL
 UTC_OFFSET = "-05:30:00"
 
-def get_horoscope_data(year, month, day, hour, minute, second, latitude, longitude, ayanamsa="Lahiri", house_system="Equal"):
-    payload = {
-        "year": year,
-        "month": month,
-        "day": day,
-        "hour": hour,
-        "minute": minute,
-        "second": second,
-        "utc": UTC_OFFSET,
-        "latitude": latitude,
-        "longitude": longitude,
-        "ayanamsa": ayanamsa,
-        "house_system": house_system
-    }
-    response = requests.post(f"{API_URL}/get_all_horoscope_data", json=payload)
-    return response.json()
+def calculate_horoscope(year, month, day, hour, minute, second, latitude, longitude, ayanamsa="Lahiri", house_system="Equal"):
+    settings = KPSettings(ayanamsa=ayanamsa, house_system=house_system)
+    chart = KPChart(year, month, day, hour, minute, second, UTC_OFFSET, latitude, longitude, settings)
+    return chart.get_chart_data()
 
 def main():
     st.title("Vedic Astrology Horoscope Chart")
@@ -40,7 +27,7 @@ def main():
         submit_button = st.form_submit_button(label="Get Horoscope Data")
 
     if submit_button:
-        data = get_horoscope_data(year, month, day, hour, minute, second, latitude, longitude, ayanamsa, house_system)
+        data = calculate_horoscope(year, month, day, hour, minute, second, latitude, longitude, ayanamsa, house_system)
         st.json(data)
 
 if __name__ == "__main__":
