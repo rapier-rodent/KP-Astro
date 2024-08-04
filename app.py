@@ -42,6 +42,7 @@ if st.button("Generate Horoscope"):
         
         # Display additional information
         st.write("Birth Time (IST):", chart_data.get("birth_time_ist"))
-        st.write("Ayanamsa Value:", chart_data.get("ayanamsa"))
+        st.write("Ayanamsa Name:", chart_data.get("ayanamsa_name"))
+        st.write("Ayanamsa Value:", chart_data.get("ayanamsa_value"))
     else:
         st.error("Error generating chart data.")
