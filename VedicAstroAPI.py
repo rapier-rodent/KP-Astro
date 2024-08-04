@@ -2,7 +2,7 @@ from typing import Optional
 from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from vedicastro import VedicAstro, horary_chart, const  # Import const to access AY_KRISHNAMURTI
+from vedicastro import VedicAstro, horary_chart
 
 app = FastAPI()
 
@@ -51,9 +51,14 @@ async def read_root():
 @app.post("/get_all_horoscope_data")
 async def get_chart_data(input: ChartInput):
     """ Generates all data for a given time and location, based on the selected ayanamsa & house system """
+    
+    # Convert input time from IST to UTC
+    utc_hour = (input.hour - 5) % 24  # Subtract 5 hours
+    utc_minute = input.minute
+
     horoscope = VedicAstro.VedicHoroscopeData(
-        input.year, input.month, input.day, input.hour, input.minute,
-        input.second, input.utc, input.latitude, input.longitude,
+        input.year, input.month, input.day, utc_hour, utc_minute,
+        input.second, "+0:00", input.latitude, input.longitude,
         input.ayanamsa, input.house_system
     )
     
@@ -66,18 +71,21 @@ async def get_chart_data(input: ChartInput):
     vimshottari_dasa_table = horoscope.compute_vimshottari_dasa(chart)
     consolidated_chart_data = horoscope.get_consolidated_chart_data(planets_data=planets_data, houses_data=houses_data, return_style=input.return_style)
 
-    # Include const.AY_KRISHNAMURTI in the output
-    ayanamsa_value = const.AY_KRISHNAMURTI if input.ayanamsa == "Krishnamurti" else None
+    # Calculate output time in IST
+    ist_hour = (utc_hour + 5) % 24  # Add 5 hours
+    ist_minute = utc_minute
+    ist_time = f"{ist_hour:02d}:{ist_minute:02d} IST"
 
     return {
+        "birth_time_ist": ist_time,  # Include the birth time in IST
+        "ayanamsa_value": horoscope.get_ayanamsa(),  # Include the ayanamsa value in the response
         "planets_data": [planet._asdict() for planet in planets_data],
         "houses_data": [house._asdict() for house in houses_data],
         "planet_significators": planet_significators,
         "planetary_aspects": planetary_aspects,
         "house_significators": house_significators,
         "vimshottari_dasa_table": vimshottari_dasa_table,
-        "consolidated_chart_data": consolidated_chart_data,
-        "ayanamsa_value": ayanamsa_value  # Include the ayanamsa value in the response
+        "consolidated_chart_data": consolidated_chart_data
     }
 
 @app.post("/get_all_horary_data")
