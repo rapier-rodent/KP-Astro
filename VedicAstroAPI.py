@@ -1,3 +1,53 @@
+from typing import Optional
+from pydantic import BaseModel
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from vedicastro import VedicAstro, horary_chart
+
+app = FastAPI()
+
+class ChartInput(BaseModel):
+    year: int
+    month: int
+    day: int
+    hour: int
+    minute: int
+    second: int
+    utc: str
+    latitude: float
+    longitude: float
+    ayanamsa: str = "Lahiri"
+    house_system: str = "Equal"
+    return_style: Optional[str] = None
+
+class HoraryChartInput(BaseModel):
+    horary_number: int
+    year: int
+    month: int
+    day: int
+    hour: int
+    minute: int
+    second: int
+    utc: str
+    latitude: float
+    longitude: float
+    ayanamsa: str = "Krishnamurti"
+    house_system: str = "Placidus"
+    return_style: Optional[str] = None
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
+
+@app.get("/")
+async def read_root():
+    return {"message": "Welcome to VedicAstro FastAPI Service!", "info": "Visit /docs to test the API functions"}
+
 @app.post("/get_all_horoscope_data")
 async def get_chart_data(input: ChartInput):
     """ Generates all data for a given time and location, based on the selected ayanamsa & house system """
@@ -33,3 +83,10 @@ async def get_chart_data(input: ChartInput):
         "vimshottari_dasa_table": vimshottari_dasa_table,
         "consolidated_chart_data": consolidated_chart_data
     }
+
+@app.post("/get_all_horary_data")
+async def get_horary_data(input: HoraryChartInput):
+    """ Generates all data for a given horary number, time and location as per KP Astrology system """
+    matched_time, vhd_hora_houses_chart, houses_data = horary_chart.find_exact_ascendant_time(
+        input.year, input.month, input.day, input.utc, input.latitude,
+        input.longitude, input.
