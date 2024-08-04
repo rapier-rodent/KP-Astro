@@ -45,4 +45,6 @@ if st.button("Generate Horoscope"):
         st.write("Ayanamsa Name:", chart_data.get("ayanamsa_name"))
         st.write("Ayanamsa Value:", chart_data.get("ayanamsa_value"))
     else:
-        st.error("Error generating chart data.")
+        # Display error message from the backend
+        error_message = response.json().get("error", "An unknown error occurred.")
+        st.error(f"Error generating chart data: {error_message}")
