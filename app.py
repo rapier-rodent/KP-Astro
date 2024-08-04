@@ -1,7 +1,6 @@
 import streamlit as st
 import requests
-import csv
-from io import StringIO
+import json
 
 st.title("Vedic Astrology Chart Generator")
 
@@ -45,16 +44,16 @@ if st.button("Generate Horoscope"):
         # Button to copy chart data to clipboard
         if st.button("Copy Chart Data"):
             # Show a text area with the chart data for manual copying
-            st.text_area("Chart Data (Copy this):", str(chart_data), height=300)
+            st.text_area("Chart Data (Copy this):", json.dumps(chart_data, indent=4), height=300)
         
-        # Button to download chart data as CSV
-        csv_data = convert_to_csv(chart_data)
+        # Button to download chart data as JSON
+        json_data = json.dumps(chart_data, indent=4)
         st.download_button(
-            label="Download Chart Data as CSV",
-            data=csv_data,
-            file_name="chart_data.csv",
-            mime="text/csv",
-            key="download-csv"  # Unique key to prevent caching issues
+            label="Download Chart Data as JSON",
+            data=json_data,
+            file_name="chart_data.json",
+            mime="application/json",
+            key="download-json"  # Unique key to prevent caching issues
         )
         
         # Display generated chart data
@@ -69,16 +68,3 @@ if st.button("Generate Horoscope"):
         st.error(f"Error generating chart data. Status code: {response.status_code}")
         st.write("Error message:", error_data.get("error"))
         st.write("Details:", error_data.get("details"))
-
-def convert_to_csv(data):
-    """Converts the chart data dictionary to CSV format."""
-    csv_buffer = StringIO()
-    writer = csv.writer(csv_buffer)
-    
-    # Write the header
-    writer.writerow(data.keys())
-    
-    # Write the data
-    writer.writerow(data.values())
-    
-    return csv_buffer.getvalue()
