@@ -51,7 +51,10 @@ if st.button("Generate Horoscope"):
         output_data += f"Houses Data: {chart_data.get('houses_data')}\n"
 
         # Copy to clipboard button
-        st.button("Copy to Clipboard", on_click=lambda: st.session_state.clipboard_data := output_data)
+        clipboard_data = st.button("Copy to Clipboard")
+        if clipboard_data:
+            st.session_state.clipboard_data = output_data
+            st.success("Output copied to clipboard!")
 
         # Download button
         st.download_button(
