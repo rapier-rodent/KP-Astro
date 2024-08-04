@@ -7,10 +7,9 @@ st.title("Vedic Astrology Chart Generator")
 year = st.number_input("Year", min_value=1900, max_value=2100)
 month = st.number_input("Month", min_value=1, max_value=12)
 day = st.number_input("Day", min_value=1, max_value=31)
-hour = st.number_input("Hour", min_value=0, max_value=23)
-minute = st.number_input("Minute", min_value=0, max_value=59)
-second = st.number_input("Second", min_value=0, max_value=59)
-utc = st.text_input("UTC (e.g., +5:30)")
+hour = st.number_input("Hour (IST)", min_value=0, max_value=23)
+minute = st.number_input("Minute (IST)", min_value=0, max_value=59)
+second = st.number_input("Second (IST)", min_value=0, max_value=59)
 latitude = st.number_input("Latitude", format="%.6f")
 longitude = st.number_input("Longitude", format="%.6f")
 ayanamsa = st.selectbox("Ayanamsa", ["Lahiri", "Krishnamurti"])
@@ -25,7 +24,7 @@ if st.button("Generate Horoscope"):
         "hour": hour,
         "minute": minute,
         "second": second,
-        "utc": utc,
+        "utc": "+5:30",  # Fixed UTC offset for IST
         "latitude": latitude,
         "longitude": longitude,
         "ayanamsa": ayanamsa,
@@ -41,9 +40,7 @@ if st.button("Generate Horoscope"):
         st.json(chart_data)  # Display the chart data in a readable format
         
         # Display additional information
-        st.write("Birth Time (IST):", chart_data.get("birth_time_ist"))
-        st.write("Ayanamsa Value:", chart_data.get("ayanamsa"))
-        st.write("Krishnamurti Ayanamsa Value:", chart_data.get("krishnamurti_ayanamsa"))
+        st.write("Ayanamsa Value:", chart_data.get("ayanamsa_value"))
     else:
         error_data = response.json()
         st.error(f"Error generating chart data. Status code: {response.status_code}")
