@@ -89,4 +89,27 @@ async def get_horary_data(input: HoraryChartInput):
     """ Generates all data for a given horary number, time and location as per KP Astrology system """
     matched_time, vhd_hora_houses_chart, houses_data = horary_chart.find_exact_ascendant_time(
         input.year, input.month, input.day, input.utc, input.latitude,
-        input.longitude, input.
+        input.longitude, input.horary_number, input.ayanamsa
+    )
+    vhd_hora = VedicAstro.VedicHoroscopeData(
+        input.year, input.month, input.day, input.hour, input.minute,
+        input.second, input.utc, input.latitude, input.longitude,
+        input.ayanamsa, input.house_system
+    )
+    vhd_hora_planets_chart = vhd_hora.generate_chart()
+    planets_data = vhd_hora.get_planets_data_from_chart(vhd_hora_planets_chart, vhd_hora_houses_chart)
+    planet_significators = vhd_hora.get_planet_wise_significators(planets_data, houses_data)
+    planetary_aspects = vhd_hora.get_planetary_aspects(vhd_hora_planets_chart)
+    house_significators = vhd_hora.get_house_wise_significators(planets_data, houses_data)
+    vimshottari_dasa_table = vhd_hora.compute_vimshottari_dasa(vhd_hora_planets_chart)
+    consolidated_chart_data = vhd_hora.get_consolidated_chart_data(planets_data=planets_data, houses_data=houses_data, return_style=input.return_style)
+
+    return {
+        "planets_data": [planet._asdict() for planet in planets_data],
+        "houses_data": [house._asdict() for house in houses_data],
+        "planet_significators": planet_significators,
+        "planetary_aspects": planetary_aspects,
+        "house_significators": house_significators,
+        "vimshottari_dasa_table": vimshottari_dasa_table,
+        "consolidated_chart_data": consolidated_chart_data
+    }
