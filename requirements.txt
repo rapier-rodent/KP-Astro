@@ -8,4 +8,5 @@ polars
 prettytable
 ipykernel
 pyswisseph
+requests
 
